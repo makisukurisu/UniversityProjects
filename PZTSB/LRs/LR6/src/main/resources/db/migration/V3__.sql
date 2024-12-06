@@ -1,0 +1,2 @@
+ALTER TABLE flight
+    ADD updated_at TIMESTAMP WITHOUT TIME ZONE;

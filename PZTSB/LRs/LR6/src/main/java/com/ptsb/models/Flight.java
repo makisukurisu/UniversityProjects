@@ -1,5 +1,6 @@
 package com.ptsb.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -12,18 +13,18 @@ import java.util.UUID;
 @Getter
 @Data
 @Entity
-@Table(name = "flight")
+@Table(name = "flight", schema="public")
 public class Flight {
     @Id
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "departsFrom_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "departs_from_id")
     private City departsFrom;
 
-    @ManyToOne
-    @JoinColumn(name = "arrivesTo_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "arrives_to_id")
     private City arrivesTo;
 
     @Setter
@@ -37,39 +38,34 @@ public class Flight {
     @Setter
     private String flightNumber;
 
+    // Didn't want to save otherwise
+    @Version
+    @JsonIgnore
+    private Long version;
+
     private ZonedDateTime createdAt;
 
-    public void setId(UUID id) {
-        this.id = Objects.requireNonNullElseGet(id, UUID::randomUUID);
-    }
+    public Flight() {}
 
-    public void setCreatedAt() {
-        if (createdAt != null) {return;}
+    @PrePersist
+    protected void onCreate() {
         this.createdAt = ZonedDateTime.now();
     }
 
-    public Flight(){
-        this.setId(null);
-        this.setCreatedAt();
-    };
-
     public Flight(
-            UUID id,
-            City departsFrom,
-            City arrivesTo,
-            String departureTime,
-            String arrivalTime,
-            int price,
-            String flightNumber
-    ){
-        this.id = Objects.requireNonNullElseGet(id, UUID::randomUUID);
-        this.departsFrom = departsFrom;
-        this.arrivesTo = arrivesTo;
+        City departsFrom,
+        City arrivesTo,
+        String departureTime,
+        String arrivalTime,
+        int price,
+        String flightNumber
+    ) {
+        this.setDepartsFrom(departsFrom);
+        this.setArrivesTo(arrivesTo);
         this.departureTime = ZonedDateTime.parse(departureTime);
         this.arrivalTime = ZonedDateTime.parse(arrivalTime);
         this.price = price;
         this.flightNumber = flightNumber;
-        this.createdAt = ZonedDateTime.now();
     }
 
 }

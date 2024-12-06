@@ -1,9 +1,7 @@
 package com.ptsb.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,29 +17,29 @@ import java.util.UUID;
 @Getter
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "user", schema = "public", uniqueConstraints = @UniqueConstraint(columnNames={"username"}))
 public class User {
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Getter
     @Setter
     private String firstName;
 
-    @Getter
     @Setter
     private String lastName;
 
-    @Getter
     @Setter
     private String username;
 
-    @Getter
     @Setter
     private ZonedDateTime createdAt;
 
+    @JsonIgnore
     private String hashedPassword;
+
+    public User() {
+    }
 
     private MessageDigest hasher() {
         try {
@@ -65,5 +63,13 @@ public class User {
         MessageDigest md = this.hasher();
 
         this.hashedPassword = Base64.getEncoder().encodeToString(md.digest(password.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    public User(String firstName, String lastName, String username, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.setHashedPassword(password);
+        this.setCreatedAt(ZonedDateTime.now());
     }
 }

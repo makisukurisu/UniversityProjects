@@ -1,9 +1,6 @@
 package com.ptsb.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Data
 @Entity
-@Table(name = "city")
+@Table(name = "city", schema = "public")
 public class City {
     @Id
     @GeneratedValue
@@ -26,5 +23,6 @@ public class City {
 
     @Getter
     @Setter
+    @Version
     private ZonedDateTime createdAt;
 }
