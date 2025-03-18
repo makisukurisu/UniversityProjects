@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: planes
+spec:
+  selector:
+    app: planes
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: planes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: planes
+  template:
+    metadata:
+      labels:
+        app: planes
+    spec:
+      containers:
+        - name: app
+          image: makipavelsu/planes-backend:1.0.1
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: IfNotPresent
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: "/healthz"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: planes-ingress
+spec:
+  rules:
+    - host: "localhost"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/api"
+            backend:
+              service:
+                name: planes
+                port:
+                  number: 8080
+---
