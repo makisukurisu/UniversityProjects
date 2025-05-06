@@ -6,9 +6,9 @@ import com.ptsb.models.Flight;
 import com.ptsb.services.FlightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -18,16 +18,19 @@ public class FlightController {
     FlightService flightService;
 
     @GetMapping("/")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public List<Flight> getFlights() {
         return flightService.getAllFlights();
     }
 
     @GetMapping("/{flightNumber}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public List<Flight> getFlightsByNumber(@PathVariable String flightNumber) {
         return flightService.getFlightsByFlightNumber(flightNumber);
     }
 
     @PostMapping("/")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Flight addFlight(@RequestBody CreateFlight flight) throws InvalidRequestException {
         return flightService.createFlight(flight);
     }

@@ -10,9 +10,10 @@ spring:
     enabled: true
   datasource:
     driverClassName: org.postgresql.Driver
-    # url: jdbc:postgresql://localhost:5432/Dev?currentSchema=public
-    url: jdbc:postgresql://planes-test-db-1.cvao6k0qkgoq.eu-north-1.rds.amazonaws.com/planes-test-db-1?currentSchema=public
+    url: jdbc:postgresql://localhost:5432/Dev?currentSchema=public
+    # url: jdbc:postgresql://database:5432/Dev?currentSchema=public
+    # url: jdbc:postgresql://planes-test-db-1.cvao6k0qkgoq.eu-north-1.rds.amazonaws.com/planes-test-db-1?currentSchema=public
     username: postgres
-    password: SECRET
-  # jpa:
-    # show-sql: true
+    password: password
+  jpa:
+    show-sql: true

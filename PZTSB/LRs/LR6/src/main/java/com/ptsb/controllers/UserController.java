@@ -7,6 +7,7 @@ import com.ptsb.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,16 +20,19 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> getUsers(){
         return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public User getUser(@PathVariable UUID id) throws DoesNotExistException {
         return userService.getUserByID(id);
     }
 
     @PostMapping("/")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public User addUser(@RequestBody CreateUser user){
         return userService.createUser(user);
     }

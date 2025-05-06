@@ -12,6 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
 import java.util.Base64;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -38,6 +39,11 @@ public class User {
     @JsonIgnore
     private String hashedPassword;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="user_roles")
+    @Setter
+    private Set<Role> roles;
+
     public User() {
     }
 
@@ -47,15 +53,6 @@ public class User {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    boolean validatePassword(
-        String password
-    ) {
-        MessageDigest md = this.hasher();
-
-        var decoded = Base64.getEncoder().encodeToString(md.digest(password.getBytes(StandardCharsets.UTF_8)));
-        return this.hashedPassword.equals(decoded);
     }
 
     public void setHashedPassword(String password) {
@@ -71,5 +68,9 @@ public class User {
         this.username = username;
         this.setHashedPassword(password);
         this.setCreatedAt(ZonedDateTime.now());
+    }
+
+    public String toString(){
+        return "User(%s, %s)".formatted(id, username);
     }
 }
